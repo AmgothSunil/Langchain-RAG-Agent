@@ -1,9 +1,5 @@
 import sys
 from pathlib import Path
-from typing import Dict
-
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_core.chat_history import BaseChatMessageHistory
 
 from app.core.exception import AppException
 from app.core.logger import setup_logger
@@ -31,7 +27,7 @@ class PromptManager:
     """
 
 
-    def load_prompt(path: str) -> str:
+    def load_prompt(self, path: str) -> str:
         """
         Load a system or contextual prompt from a given file path.
 

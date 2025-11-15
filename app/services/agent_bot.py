@@ -66,8 +66,7 @@ class AgentChatbot:
             executor = AgentExecutor.from_agent_and_tools(
                 agent=agent,
                 tools=tools,
-                handle_parsing_errors=True,
-                verbose=True
+                handle_parsing_errors=True
             )
 
             # Call the agent
@@ -84,7 +83,7 @@ class AgentChatbot:
                 response_text
             )
 
-            # Store NEW memory
+            # Store New memory
             pc_memory.store_memory(self.session_id, self.question)
 
             logger.info(f"Chat session completed | session_id={self.session_id}")
