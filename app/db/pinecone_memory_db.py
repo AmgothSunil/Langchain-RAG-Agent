@@ -42,7 +42,7 @@ class PineconeMemory:
     def __init__(self):
         """Initialize Pinecone client, index, and embedding model."""
         try:
-            # --- Load API keys ---
+            # Load API keys 
             self.pinecone_api_key = os.getenv("PINECONE_API_KEY")
             self.index_name = os.getenv("PINECONE_MEMORY_INDEX_NAME")
 
@@ -54,23 +54,21 @@ class PineconeMemory:
 
             logger.info("Initializing Pinecone client for memory store...")
 
-            # --- Initialize Pinecone ---
+            # Initialize Pinecone
             self.pc = Pinecone(api_key=self.pinecone_api_key)
             self.index = self.pc.Index(self.index_name)
 
             logger.info(f"Pinecone memory index loaded: {self.index_name}")
 
-            # --- Initialize Embedding Model ---
+            # Initialize Embedding Model
             self.embedder = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
         except Exception as e:
             logger.error(f"Failed to initialize PineconeMemory: {e}")
             raise AppException(e, sys)
 
-    # -------------------------------------------------------------------------
-    # Embedding
-    # -------------------------------------------------------------------------
 
+    # Embedding
     def embed_text(self, text: str) -> list:
         """
         Convert text into a vector embedding using HuggingFace.
@@ -83,15 +81,13 @@ class PineconeMemory:
         """
         try:
             embedding = self.embedder.embed_query(text)
-            return embedding  # Already a list
+            return embedding  
         except Exception as e:
             logger.error(f"Embedding generation failed: {e}")
             raise AppException(e, sys)
 
-    # -------------------------------------------------------------------------
-    # Memory Storage
-    # -------------------------------------------------------------------------
 
+    # Memory Storage
     def store_memory(self, user_id: str, memory_text: str):
         """
         Store a semantic memory vector into Pinecone with metadata.
@@ -121,10 +117,8 @@ class PineconeMemory:
             logger.error(f"Failed to store memory: {e}")
             raise AppException(e, sys)
 
-    # -------------------------------------------------------------------------
-    # Memory Retrieval
-    # -------------------------------------------------------------------------
 
+    # Memory Retrieval
     def retrieve_memory(self, user_id: str, query: str, top_k: int = 5) -> list:
         """
         Retrieve relevant long-term memories via semantic similarity search.

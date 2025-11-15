@@ -6,13 +6,11 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from starlette.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR
 
 from dotenv import load_dotenv
 
 from app.core.logger import setup_logger
-from app.core.exception import AppException
 from app.utils.params import load_params
 from app.services.preprocess import DocumentPreprocessor
 from app.services.create_agent import CreateAgent
@@ -29,6 +27,7 @@ os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT")
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 
 
+# Load Params
 params = load_params("config/params.yaml")
 server_params = params.get("server_params", {})
 log_file_path = server_params.get("log_file_path", "server.log")
@@ -50,11 +49,12 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Conversational RAG Chatbot",
+    title="Conversational Agentic RAG Chatbot",
     version="1.0.0",
     lifespan=lifespan
 )
 
+# CORS(Cross-Origin Resource Sharing) For API Safety (backend)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:8501", "http://127.0.0.1:8501"],
@@ -63,12 +63,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+# Home Message
 @app.get("/")
 async def root():
-    return {"message": "Conversational RAG API running"}
+    return {"message": "Conversational Agentic RAG API running..."}
 
 
+# Upload Docs method
 @app.post("/upload-docs", status_code=HTTP_200_OK)
 async def upload_documents(
     session_id: str = Form(...),
@@ -113,6 +114,7 @@ async def upload_documents(
         )
 
 
+# Chat method for user queries 
 @app.post("/chat", status_code=HTTP_200_OK)
 async def chat_with_bot(
     session_id: str = Form(...),
@@ -132,9 +134,9 @@ async def chat_with_bot(
         agent_builder = CreateAgent()
         agent, tools = agent_builder.create_agent(retriever)
 
-        # Chat
+        # Chat Agent
         bot = AgentChatbot(question=question, session_id=session_id)
-        response = await bot.chatbot(agent, tools)
+        response = await bot.agentbot(agent, tools)
 
         return {
             "session_id": session_id,

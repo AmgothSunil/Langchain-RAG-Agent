@@ -1,5 +1,5 @@
-session_prompt_params:
-  log_file_path: "session_prompt.log"
+prompt_params:
+  log_file_path: "prompt.log"
 
 preprocess_params:
   log_file_path: "docs_preprocess.log"
@@ -9,11 +9,8 @@ preprocess_params:
 create_agent_params:
   log_file_path: "agent.log"
 
-redis_params:
-  log_file_path: "redisdb.log"
-
-rag_chatbot_params:
-  log_file_path: "rag_chatbot.log"
+agent_bot_params:
+  log_file_path: "agent_bot.log"
   chat_history_limit: 5 
 
 server_params:

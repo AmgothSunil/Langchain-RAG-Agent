@@ -12,11 +12,11 @@ from app.db.pinecone_memory_db import PineconeMemory
 
 
 params = load_params("config/params.yaml")
-rag_chatbot_params = params.get("rag_chatbot_params", {})
-log_file_path = rag_chatbot_params.get("log_file_path", "rag_chatbot.log")
+rag_chatbot_params = params.get("agent_bot_params", {})
+log_file_path = rag_chatbot_params.get("log_file_path", "agent_bot.log")
 chat_history_limit = rag_chatbot_params.get("chat_history_limit", 5)
 
-logger = setup_logger("RAGChatbot", log_file_path)
+logger = setup_logger("AgenticRAGbot", log_file_path)
 
 mango_db = AsyncMongoDatabase()
 pc_memory = PineconeMemory()
@@ -36,21 +36,21 @@ class AgentChatbot:
         self.question = question
         self.session_id = session_id
 
-    async def chatbot(self, agent: Runnable, tools: List[Tool]) -> Optional[str]:
+    async def agentbot(self, agent: Runnable, tools: List[Tool]) -> Optional[str]:
         try:
             logger.info(f"Chat session started | session_id={self.session_id}")
 
-            # 1️⃣ Retrieve past short-term history
+            # Retrieve past short-term history
             history = await mango_db.fetch_recent_chats(
                 self.session_id, chat_history_limit
             )
 
-            # 2️⃣ Retrieve long-term semantic memory
+            # Retrieve long-term semantic memory
             semantic_memory = pc_memory.retrieve_memory(
                 self.session_id, self.question
             )
 
-            # 3️⃣ Build final agent input
+            # Build final agent input
             final_prompt = f"""
                             Short-Term Conversation History:
                             {history}
@@ -62,7 +62,7 @@ class AgentChatbot:
                             {self.question}
                             """
 
-            # 4️⃣ Create AgentExecutor
+            # Create AgentExecutor
             executor = AgentExecutor.from_agent_and_tools(
                 agent=agent,
                 tools=tools,
@@ -70,22 +70,21 @@ class AgentChatbot:
                 verbose=True
             )
 
-            # 5️⃣ Call the agent
+            # Call the agent
             result = executor.invoke({
-                "input": final_prompt,
-                # "agent_scratchpad": []    
+                "input": final_prompt
             })
 
-            response_text = result["output"]  # ReAct always returns "output"
+            response_text = result["output"]
 
-            # 6️⃣ Save chat to Redis
+            # Save chat to Mango Database
             await mango_db.save_chat(
                 self.session_id,
                 self.question,
                 response_text
             )
 
-            # 7️⃣ Store NEW memory (post-response)
+            # Store NEW memory
             pc_memory.store_memory(self.session_id, self.question)
 
             logger.info(f"Chat session completed | session_id={self.session_id}")

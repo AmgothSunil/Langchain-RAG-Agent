@@ -3,20 +3,19 @@ import sys
 from dotenv import load_dotenv
 from langchain.schema import BaseRetriever
 
-from langchain.agents import create_react_agent, AgentExecutor
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.agents import create_react_agent
 from langchain_core.prompts import PromptTemplate
-
 from langchain_core.tools import create_retriever_tool
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.core.logger import setup_logger
 from app.core.exception import AppException
 from app.utils.params import load_params
+from app.utils.prompt import PromptManager
 
 load_dotenv()
 
+prompt_manager = PromptManager()
 
 class CreateAgent:
     """
@@ -101,26 +100,8 @@ class CreateAgent:
 
             tools = [retriever_tool]
 
-            # Agent System Prompt
-
-            template = """Answer the following questions as best you can. You have access to the following tools:
-            {tools} 
-            The tools represent the document(s) provided by the user and must be used as the primary source of truth for answering questions.
-            If the user asks a question that CAN be answered using the information found through the tools, you MUST use the tools to retrieve and answer strictly based on the document content.
-
-            If the user asks a question that CANNOT be answered from the document, respond with:
-            "The provided document does not contain information about your question. However, from general knowledge..."
-            Then continue with a clear, conversational explanation based on your general LLM knowledge.
-
-            Use the following format:
-            Question: the input question you must answer Thought: you should always think about what to do 
-            Action: the action to take, should be one of [{tool_names}] Action Input: the input to the action 
-            Observation: the result of the action ... (this Thought/Action/Action Input/Observation can repeat N times)
-            Thought: I now know the final answer Final Answer: the final answer to the original input question
-
-            Begin!
-
-            Question: {input} Thought:{agent_scratchpad}"""
+            # Load prompt
+            template = prompt_manager.load_prompt("app/prompts/create_agent_prompt.txt")
 
             prompt = PromptTemplate.from_template(template)
 
@@ -128,8 +109,7 @@ class CreateAgent:
             agent = create_react_agent(
                 llm=self.llm,
                 tools=tools,
-                prompt=prompt,
-                # output_parser=StrOutputParser()
+                prompt=prompt
             )
 
             return agent, tools

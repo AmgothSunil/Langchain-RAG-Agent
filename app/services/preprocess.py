@@ -59,6 +59,7 @@ class DocumentPreprocessor:
 
         logger.info("DocumentPreprocessor initialized successfully.")
 
+
     def load_documents(self, sources: List[str]) -> List[Any]:
         """
         Load and parse documents from a list of sources (file paths or URLs).
@@ -78,7 +79,7 @@ class DocumentPreprocessor:
         for source in sources:
             source_name = os.path.basename(source) if not source.startswith('http') else source
             try:
-                # Logic to handle URLs and file paths
+                # Handle URLs and file paths
                 if source.startswith("http://") or source.startswith("https://"):
                     logger.info(f"Loading content from URL: {source_name}")
                     loader = WebBaseLoader(source)
@@ -104,8 +105,7 @@ class DocumentPreprocessor:
 
             except Exception as e:
                 logger.error(f"Error loading source '{source_name}': {e}", exc_info=True)
-                # We can choose to continue or raise. Continuing is more robust for multi-source uploads.
-                # raise AppException(f"Error loading source '{source_name}': {e}", sys)
+            
 
         logger.info(f"Successfully loaded content from {len(all_documents)} total documents.")
         return all_documents
@@ -152,4 +152,3 @@ class DocumentPreprocessor:
         except Exception as e:
             logger.error(f"Error during document preprocessing or Pinecone vectorization: {e}")
             raise AppException(e, sys)
-
