@@ -1,0 +1,67 @@
+{
+    "family": "conversational-rag-task",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "1024",
+    "memory": "2048",
+    "taskRoleArn": "arn:aws:iam::768361274236:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::768361274236:role/ecsTaskExecutionRole",
+  
+    "containerDefinitions": [
+      {
+        "name": "conversational-rag",
+        "image": "768361274236.dkr.ecr.ap-south-1.amazonaws.com/conversational-rag-chatbot:latest",
+        "essential": true,
+  
+        "portMappings": [
+          {
+            "containerPort": 8000,
+            "protocol": "tcp"
+          }
+        ],
+  
+        "secrets": [
+          { "name": "LANGCHAIN_API_KEY", "valueFrom": "/conversational-rag/LANGCHAIN_API_KEY" },
+          { "name": "LANGCHAIN_PROJECT", "valueFrom": "/conversational-rag/LANGCHAIN_PROJECT" },
+          { "name": "HUGGINGFACE_API_TOKEN", "valueFrom": "/conversational-rag/HUGGINGFACE_API_TOKEN"},
+          { "name": "GROQ_API_KEY", "valueFrom": "/conversational-rag/GROQ_API_KEY"},
+          { "name": "PINECONE_API_KEY", "valueFrom": "/conversational-rag/PINECONE_API_KEY"},
+          { "name": "PINECONE_INDEX_NAME", "valueFrom": "/conversational-rag/PINECONE_INDEX_NAME"},
+          { "name": "MONGO_URI", "valueFrom": "/conversational-rag/MONGO_URI"},
+          { "name": "MONGO_DB_NAME", "valueFrom": "/conversational-rag/MONGO_DB_NAME"},
+          { "name": "MONGO_COLLECTION", "valueFrom": "/conversational-rag/MONGO_COLLECTION"}
+        ],
+  
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "/ecs/conversational-rag-task",
+            "awslogs-region": "ap-south-1",
+            "awslogs-stream-prefix": "ecs"
+          }
+        },
+  
+        "environment": [
+          {
+            "name": "UVICORN_LOG_LEVEL",
+            "value": "info"
+          },
+          {
+            "name": "PYTHONUNBUFFERED",
+            "value": "1"
+          }
+        ],
+  
+        "healthCheck": {
+          "command": [
+            "CMD-SHELL",
+            "curl -f http://localhost:8000 || exit 1"
+          ],
+          "interval": 30,
+          "timeout": 5,
+          "retries": 3,
+          "startPeriod": 60
+        }
+      }
+    ]
+  }

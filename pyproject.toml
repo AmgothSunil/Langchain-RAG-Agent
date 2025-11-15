@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "langchain-rag-agent"
+version = "0.1.0"
+description = "Langchain RAG Agent with Pinecone, MangoDB, FastAPI, and Streamlit frontend"
+authors = [{name = "Amgoth Sunil", email = "amgothsunil422@gmail.com" }]
+readme = "README.md"
+license = {text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+  "awscli>=1.42.71",
+  "bs4>=0.0.2",
+  "fastapi>=0.121.1",
+  "langchain==0.3.27",
+  "langchain-community>=0.3.31",
+  "langchain-google-genai>=2.1.12",
+  "langchain-groq>=0.3.8",
+  "langchain-huggingface>=0.3.1",
+  "langchain-openai>=0.3.35",
+  "langchain-pinecone>=0.2.13",
+  "langchain-text-splitters>=0.3.11",
+  "motor>=3.7.1",
+  "pinecone>=7.3.0",
+  "pymupdf>=1.26.6",
+  "pypdf>=6.2.0",
+  "python-dotenv>=1.2.1",
+  "python-multipart>=0.0.20",
+  "redis>=7.0.1",
+  "redis-cli>=1.0.1",
+  "sentence-transformers>=5.1.2",
+  "streamlit>=1.51.0",
+  "uvicorn>=0.38.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["app", "frontend"]
