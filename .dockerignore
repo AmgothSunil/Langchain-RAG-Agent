@@ -16,3 +16,6 @@ README.md
 uv.lock
 .gitignore
 .python-version
+ecs-task-def.json
+.env.example
+frontend/

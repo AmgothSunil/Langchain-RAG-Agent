@@ -7,7 +7,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 from app.core.logger import setup_logger
 from app.core.exception import AppException
-from utils.params import load_params
+from app.utils.params import load_params
 
 load_dotenv()
 
