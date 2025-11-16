@@ -21,6 +21,12 @@ from app.db.mango_database import AsyncMongoDatabase
 # Load environment
 load_dotenv()
 
+# Application Settings
+os.environ["USER_AGENT"] = os.getenv("USER_AGENT", "LangChain-RAG-Agent/1.0")
+os.environ["ENVIRONMENT"] = os.getenv("ENVIRONMENT", "production")
+os.environ["DEBUG"] = os.getenv("DEBUG", "false")
+
+
 # LangSmith tracing
 os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
 os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT")
@@ -33,6 +39,13 @@ server_params = params.get("server_params", {})
 log_file_path = server_params.get("log_file_path", "server.log")
 
 logger = setup_logger("ConversationalRAGServer", log_file_path)
+
+
+# logging level of  environment
+if os.getenv("ENVIRONMENT") == "production":
+    logger.setLevel("INFO")
+else:
+    logger.setLevel("DEBUG")
 
 mango_db = AsyncMongoDatabase()
 document_preprocessor = DocumentPreprocessor()
@@ -51,13 +64,18 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Conversational Agentic RAG Chatbot",
     version="1.0.0",
+    debug=os.getenv("DEBUG").lower() == "true",
     lifespan=lifespan
 )
 
 # CORS(Cross-Origin Resource Sharing) For API Safety (backend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8501", "http://127.0.0.1:8501"],
+    allow_origins=[
+        "https://langchain-rag-agent.onrender.com",
+        "http://localhost:8501", 
+        "http://127.0.0.1:8501"],
+
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -67,6 +85,14 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {"message": "Conversational Agentic RAG API running..."}
+
+
+# Health Check Endpoint
+@app.get("/health", status_code=HTTP_200_OK)
+async def health_check():
+    """Simple health check for ECS load balancers."""
+    logger.debug("Health check endpoint called")
+    return {"status": "healthy", "service": "ConversationalRAGServer"}
 
 
 # Upload Docs method

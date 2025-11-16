@@ -30,7 +30,10 @@
           { "name": "PINECONE_MEMORY_INDEX_NAME", "valueFrom": "/agentic-bot/PINECONE_MEMORY_INDEX_NAME"},
           { "name": "MONGO_URI", "valueFrom": "/agentic-bot/MONGO_URI"},
           { "name": "MONGO_DB_NAME", "valueFrom": "/agentic-bot/MONGO_DB_NAME"},
-          { "name": "MONGO_COLLECTION", "valueFrom": "/agentic-bot/MONGO_COLLECTION"}
+          { "name": "MONGO_COLLECTION", "valueFrom": "/agentic-bot/MONGO_COLLECTION"},
+          { "name": "USER_AGENT", "valueFrom": "/agentic-bot/USER_AGENT"},
+          { "name": "ENVIRONMENT", "valueFrom": "/agentic-bot/ENVIRONMENT"},
+          { "name": "DEBUG", "valueFrom": "/agentic-bot/DEBUG"}
         ],
   
         "logConfiguration": {
