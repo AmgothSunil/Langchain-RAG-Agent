@@ -266,7 +266,7 @@ The UI will be available at:
 curl http://localhost:8000/health
 
 # Response should be:
-# {"status":"healthy","timestamp":"2024-01-15T10:30:00Z"}
+# {"status":"healthy","service": "ConversationalRAGServer"}
 ```
 
 ## API Documentation
