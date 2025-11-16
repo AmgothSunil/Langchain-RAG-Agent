@@ -1,16 +1,16 @@
 {
-    "family": "conversational-rag-task",
+    "family": "agentic-rag-task",
     "networkMode": "awsvpc",
     "requiresCompatibilities": ["FARGATE"],
-    "cpu": "1024",
-    "memory": "2048",
+    "cpu": "2048",
+    "memory": "4096",
     "taskRoleArn": "arn:aws:iam::768361274236:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::768361274236:role/ecsTaskExecutionRole",
   
     "containerDefinitions": [
       {
-        "name": "conversational-rag",
-        "image": "768361274236.dkr.ecr.ap-south-1.amazonaws.com/conversational-rag-chatbot:latest",
+        "name": "agentic-rag",
+        "image": "768361274236.dkr.ecr.ap-south-1.amazonaws.com/agentic-rag-bot",
         "essential": true,
   
         "portMappings": [
@@ -21,21 +21,22 @@
         ],
   
         "secrets": [
-          { "name": "LANGCHAIN_API_KEY", "valueFrom": "/conversational-rag/LANGCHAIN_API_KEY" },
-          { "name": "LANGCHAIN_PROJECT", "valueFrom": "/conversational-rag/LANGCHAIN_PROJECT" },
-          { "name": "HUGGINGFACE_API_TOKEN", "valueFrom": "/conversational-rag/HUGGINGFACE_API_TOKEN"},
-          { "name": "GROQ_API_KEY", "valueFrom": "/conversational-rag/GROQ_API_KEY"},
-          { "name": "PINECONE_API_KEY", "valueFrom": "/conversational-rag/PINECONE_API_KEY"},
-          { "name": "PINECONE_INDEX_NAME", "valueFrom": "/conversational-rag/PINECONE_INDEX_NAME"},
-          { "name": "MONGO_URI", "valueFrom": "/conversational-rag/MONGO_URI"},
-          { "name": "MONGO_DB_NAME", "valueFrom": "/conversational-rag/MONGO_DB_NAME"},
-          { "name": "MONGO_COLLECTION", "valueFrom": "/conversational-rag/MONGO_COLLECTION"}
+          { "name": "LANGCHAIN_API_KEY", "valueFrom": "/agentic-bot/LANGCHAIN_API_KEY" },
+          { "name": "LANGCHAIN_PROJECT", "valueFrom": "/agentic-bot/LANGCHAIN_PROJECT" },
+          { "name": "HUGGINGFACE_API_TOKEN", "valueFrom": "/agentic-bot/HUGGINGFACE_API_TOKEN"},
+          { "name": "GOOGLE_API_KEY", "valueFrom": "/agentic-bot/GOOGLE_API_KEY"},
+          { "name": "PINECONE_API_KEY", "valueFrom": "/agentic-bot/PINECONE_API_KEY"},
+          { "name": "PINECONE_VECTORS_INDEX_NAME", "valueFrom": "/agentic-bot/PINECONE_VECTORS_INDEX_NAME"},
+          { "name": "PINECONE_MEMORY_INDEX_NAME", "valueFrom": "/agentic-bot/PINECONE_MEMORY_INDEX_NAME"},
+          { "name": "MONGO_URI", "valueFrom": "/agentic-bot/MONGO_URI"},
+          { "name": "MONGO_DB_NAME", "valueFrom": "/agentic-bot/MONGO_DB_NAME"},
+          { "name": "MONGO_COLLECTION", "valueFrom": "/agentic-bot/MONGO_COLLECTION"}
         ],
   
         "logConfiguration": {
           "logDriver": "awslogs",
           "options": {
-            "awslogs-group": "/ecs/conversational-rag-task",
+            "awslogs-group": "/ecs/agentic-rag-task",
             "awslogs-region": "ap-south-1",
             "awslogs-stream-prefix": "ecs"
           }
